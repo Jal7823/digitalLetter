@@ -41,12 +41,6 @@ class ProductSerializerGet(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('created_at', 'updated_at')
 
-    def validate_price(self, value):
-        if value < 0:
-            raise serializers.ValidationError("Price cannot be negative.")
-        value = value * 10
-        return value
-
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data['price'] = data['price'] + ' €'

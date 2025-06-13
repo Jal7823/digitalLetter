@@ -19,13 +19,15 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
     # Categories API
-    path('api/  ', include('apps.categories.api.router')),  # Categories API
+    path('api/', include('apps.categories.api.router')),  # Categories API
 
     # Products API
     path('api/', include('apps.products.api.router')),  # Products API
 
     # Company API
     path('api/', include('apps.company.api.router')),  # Company API
+    # Users API
+    path('api/', include('apps.users.api.router')),  # Users API
 
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

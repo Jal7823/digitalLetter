@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'apps.products',
     'apps.categories',
     'apps.company',
+    'apps.users',
     'drf_spectacular',
     'rest_framework_simplejwt',
 ]
@@ -126,6 +127,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+# user model
+AUTH_USER_MODEL = "users.Users"
 
 # REST Framework settings
 REST_FRAMEWORK = {

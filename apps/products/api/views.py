@@ -5,7 +5,7 @@ from apps.products.api.serializer import ProductSerializerPost, ProductSerialize
 
 
 class ProductsViewSetGet(viewsets.ModelViewSet):
-    queryset = Plates.objects.all()
+    queryset = Plates.objects.filter(available=True)
     permission_classes = [AllowAny]
 
     def get_serializer_class(self):
