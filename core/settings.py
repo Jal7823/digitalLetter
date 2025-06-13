@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'apps.products',
     'apps.categories',
+    'apps.company',
     'drf_spectacular',
     'rest_framework_simplejwt',
 ]
@@ -136,6 +137,6 @@ REST_FRAMEWORK = {
     ),
     # Puedes dejar los permisos por defecto o ajustarlos
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
+    #    'rest_framework.permissions.IsAuthenticated',
     ),
 }

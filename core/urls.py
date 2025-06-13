@@ -24,6 +24,9 @@ urlpatterns = [
     # Products API
     path('api/', include('apps.products.api.router')),  # Products API
 
+    # Company API
+    path('api/', include('apps.company.api.router')),  # Company API
+
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
