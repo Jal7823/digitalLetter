@@ -2,7 +2,48 @@ from rest_framework import viewsets
 from apps.categories.models import Category
 from apps.categories.api.serializers import CategorySerializer
 from rest_framework.permissions import AllowAny
+from drf_spectacular.utils import extend_schema, extend_schema_view
+from rest_framework.response import Response
 
+
+@extend_schema_view(
+    list=extend_schema(
+        tags=['categories'],
+        description='List all categories',
+        responses=CategorySerializer(many=True),
+    ),
+    create=extend_schema(
+        tags=['categories'],
+        description='Create a new category',
+        request=CategorySerializer,
+        responses={201: CategorySerializer, 400: Response({'detail': 'Invalid data'})},
+    ),
+    retrieve=extend_schema(
+        tags=['categories'],
+        description='Retrieve a category by ID',
+        responses={200: CategorySerializer, 404: Response({'detail': 'Not found'})},
+    ),
+    update=extend_schema(
+        tags=['categories'],
+        description='Update a category by ID',
+        request=CategorySerializer,
+        responses={200: CategorySerializer, 400: Response({'detail': 'Invalid data'})},
+    ),
+    partial_update=extend_schema(
+        tags=['categories'],
+        description='Partial update a category by ID',
+        request=CategorySerializer,
+        responses={200: CategorySerializer, 400: Response({'detail': 'Invalid data'})},
+    ),
+    destroy=extend_schema(
+        tags=['categories'],
+        description='Delete a category by ID',
+        responses={204: Response(description='Deleted successfully')},
+    ),
+)
+class CategoriesView(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
 
 class CategoriesView(viewsets.ModelViewSet):
     """
