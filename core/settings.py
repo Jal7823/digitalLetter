@@ -143,3 +143,9 @@ REST_FRAMEWORK = {
     #    'rest_framework.permissions.IsAuthenticated',
     ),
 }
+
+SPECTACULAR_SETTINGS = {
+    # ...
+    'SECURITY': [{'BearerAuth': []}],
+    # ...
+}

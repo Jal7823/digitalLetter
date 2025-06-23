@@ -1,11 +1,13 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-from apps.users.api.views import RegisterClients, RegisterEmploye
+from apps.users.api.views import RegisterClients, RegisterEmploye,UsersListViewSet
 
 router = DefaultRouter()
 router.register(r'employe', RegisterEmploye, basename='employe')
 router.register(r'clients', RegisterClients, basename='clients')
+router.register(r'users-list', UsersListViewSet, basename='users-list')
+
 
 urlpatterns = [
     path('', include(router.urls)),
