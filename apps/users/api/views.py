@@ -65,6 +65,14 @@ class RegisterEmploye(viewsets.ModelViewSet):
     serializer_class = SerializerEmploye
     permission_classes = [IsStaff]
 
+    def get_permissions(self):
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            return [IsStaff()]
+        elif self.action == 'list':
+            return [IsStaffOrEmploye()]
+        return super().get_permissions()
+
+
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
@@ -123,9 +131,8 @@ class RegisterEmploye(viewsets.ModelViewSet):
     ),
 )
 class RegisterClients(viewsets.ModelViewSet):
-    queryset = Users.objects.filter(role="clients")
+    queryset = Users.objects.filter(role="client")
     serializer_class = SerializerClients
-    permission_classes = [IsStaff]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -147,7 +154,7 @@ class RegisterClients(viewsets.ModelViewSet):
     )
 )
 class UsersListViewSet(viewsets.ReadOnlyModelViewSet):
-    permission_classes = [IsAuthenticated, IsStaffOrEmploye]
+    permission_classes = [IsStaffOrEmploye,]
     serializer_class = UserListSerializer
 
     def get_queryset(self):
@@ -164,5 +171,3 @@ class UsersListViewSet(viewsets.ReadOnlyModelViewSet):
         return super().list(request, *args, **kwargs)
 
 
-
-#TODO DEBES REVISAR ESTO, NO SE SI ESTA BIEN, TIENES QUE ESTUDIAR HASTA ENTENDER LA DIFERENCIA ENTRE AUTENTIFICACION Y AUTORIZACION, LOS CLIENTES VEN A LOS EMPLEADOS, PERO NO DEBERIAN PODER VER A LOS DEMAS CLIENTES, SOLO A SI MISMOS, Y LOS EMPLEADOS DEBERIAN PODER VER A LOS CLIENTES, PERO NO A LOS DEMAS EMPLEADOS, SOLO A SI MISMOS, Y LOS ADMINISTRADORES DEBERIAN PODER VER A TODOS, POR CIERTO CREA UNA RAMA ESTAS TRABAJANDO SOBRE MAIN, ULTIMO COMMIR LO HICISTE AQUI 

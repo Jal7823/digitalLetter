@@ -132,20 +132,29 @@ AUTH_USER_MODEL = "users.Users"
 
 # REST Framework settings
 REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    # Puedes dejar los permisos por defecto o ajustarlos
     'DEFAULT_PERMISSION_CLASSES': (
-    #    'rest_framework.permissions.IsAuthenticated',
+        # Puedes activar esto si quieres proteger por defecto todos los endpoints
+        # 'rest_framework.permissions.IsAuthenticated',
     ),
 }
 
 SPECTACULAR_SETTINGS = {
-    # ...
-    'SECURITY': [{'BearerAuth': []}],
-    # ...
+    'TITLE': 'Tu API',
+    'DESCRIPTION': 'Documentación de tu API',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'COMPONENT_SPLIT_REQUEST': True,  # Recomendado
+    'SECURITY': [{'TokenAuth': []}],  # Aquí el cambio importante
+    'SECURITY_SCHEMES': {
+        'TokenAuth': {
+            'type': 'apiKey',
+            'in': 'header',
+            'name': 'Authorization',
+            'description': 'Usa este formato: Token <tu_token>',
+        },
+    },
 }
