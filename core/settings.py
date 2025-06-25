@@ -137,7 +137,6 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
-        # Puedes activar esto si quieres proteger por defecto todos los endpoints
         # 'rest_framework.permissions.IsAuthenticated',
     ),
 }
@@ -147,8 +146,8 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'Documentación de tu API',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
-    'COMPONENT_SPLIT_REQUEST': True,  # Recomendado
-    'SECURITY': [{'TokenAuth': []}],  # Aquí el cambio importante
+    'COMPONENT_SPLIT_REQUEST': True,  
+    'SECURITY': [{'TokenAuth': []}],  
     'SECURITY_SCHEMES': {
         'TokenAuth': {
             'type': 'apiKey',

@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Q
 from rest_framework import viewsets
+from rest_framework.views import APIView
 from drf_spectacular.utils import extend_schema, extend_schema_view
 
 from apps.users.permisionsUsers import IsStaff, IsBoss,IsStaffOrEmploye
@@ -171,3 +172,33 @@ class UsersListViewSet(viewsets.ReadOnlyModelViewSet):
         return super().list(request, *args, **kwargs)
 
 
+class MeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        serializer = UserListSerializer(user)
+        return Response(serializer.data)
+    def patch(self, request):
+        user = request.user
+        serializer = UserListSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class ChangePasswordView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        serializer = ChangePasswordSerializer(data=request.data)
+        if serializer.is_valid():
+            if not user.check_password(serializer.validated_data['old_password']):
+                return Response({"old_password": "Contraseña actual incorrecta."},
+                                status=status.HTTP_400_BAD_REQUEST)
+            user.set_password(serializer.validated_data['new_password'])
+            user.save()
+            return Response({"detail": "Contraseña actualizada correctamente."},
+                            status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

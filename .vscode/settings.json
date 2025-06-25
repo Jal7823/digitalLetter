@@ -2,5 +2,10 @@
     "conventionalCommits.scopes": [
         "Tests",
         "Documentation"
-    ]
+    ],
+    "python.testing.pytestArgs": [
+        "apps"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true
 }
