@@ -68,12 +68,6 @@ Para iniciar:
 docker-compose up --build
 
 ```
-
-
-Esto permite instalar correctamente las dependencias de requirements.txt que incluyen mysqlclient.
-
-
-```
 ## 📂 Rutas principales (routers)
 Se definen usando DefaultRouter para cada app:
 ```
