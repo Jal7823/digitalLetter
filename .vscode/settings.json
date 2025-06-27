@@ -1,7 +1,8 @@
 {
     "conventionalCommits.scopes": [
         "Tests",
-        "Documentation"
+        "Documentation",
+        "Docker"
     ],
     "python.testing.pytestArgs": [
         "apps"

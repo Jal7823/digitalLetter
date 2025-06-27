@@ -6,7 +6,7 @@ Bienvenido a **DigitalLetter API** — un backend RESTful construido con Django 
 
 ## 🚀 Tecnologías usadas
 
-- Python 3.13  
+- Python 3.11  
 - Django 5.2  
 - Django REST Framework  
 - Pytest para testing  
@@ -26,12 +26,12 @@ Bienvenido a **DigitalLetter API** — un backend RESTful construido con Django 
 
 ## 🔍 Endpoints principales
 
-| Recurso    | URL base        | Métodos          | Descripción                         |
-|------------|-----------------|------------------|-----------------------------------|
-| Categorías | `/api/categories/` | GET, POST, PUT... | CRUD de categorías                |
-| Platos     | `/api/plates/`    | GET, POST, PUT... | CRUD de platos con categorías     |
-| Empleados  | `/api/employe/`   | GET, POST, PATCH  | Gestión usuarios con rol `employe`|
-| Clientes   | `/api/clients/`   | GET, POST, PATCH  | Gestión usuarios con rol `client` |
+| Recurso    | URL base          | Métodos          | Descripción                         |
+|------------|-------------------|------------------|-----------------------------------|
+| Categorías | `/api/categories/`| GET, POST, PUT...| CRUD de categorías                 |
+| Platos     | `/api/products/`  | GET, POST, PUT...| CRUD de platos con categorías     |
+| Empleados  | `/api/employe/`   | GET, POST, PATCH | Gestión usuarios con rol `employe`|
+| Clientes   | `/api/clients/`   | GET, POST, PATCH | Gestión usuarios con rol `client` |
 
 ---
 
@@ -58,29 +58,41 @@ Bienvenido a **DigitalLetter API** — un backend RESTful construido con Django 
 
 ---
 
-## 🧪 Cómo ejecutar los tests
+## 🐳 Docker
 
-Para correr los tests con `pytest`:
+Se usa una imagen basada en `python:3.11-slim` con instalación de paquetes necesarios para compilar `mysqlclient`:
+
+```dockerfile
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    default-libmysqlclient-dev \
+    python3-dev \
+    pkg-config \
+    && rm -rf /var/lib/apt/lists/*
+```
+
+Esto permite instalar correctamente las dependencias de requirements.txt que incluyen mysqlclient.
+
+## 🧪 Cómo ejecutar los tests
+Para correr los tests con pytest:
 
 ```bash
 pytest
 ```
-
 ## 📂 Rutas principales (routers)
 Se definen usando DefaultRouter para cada app:
-
+```
 ```python
 router.register(r'categories', CategoriesView, basename='categories')
-router.register(r'plates', ProductsViewSetGet, basename='plates')
+router.register(r'products', ProductsViewSetGet, basename='products')
 router.register(r'employe', RegisterEmploye, basename='employe')
 router.register(r'clients', RegisterClients, basename='clients')
 ```
 
-
 ## ⚙️ Configuración
 Usa .env para variables sensibles (no incluido en el repo).
 
-Base de datos SQLite por defecto, puedes cambiar a PostgreSQL en core/settings.py.
+Base de datos SQLite por defecto, puedes cambiar a PostgreSQL o MySQL en core/settings.py.
 
 Configura almacenamiento para imágenes (MEDIA_ROOT y MEDIA_URL).
 
@@ -97,4 +109,10 @@ Mantén rutas RESTful con viewsets y routers para claridad y escalabilidad.
 Si quieres contribuir o tienes dudas, ¡escríbeme!
 
 Gracias por usar DigitalLetter API ✨
+
+
+
+
+
+
 
