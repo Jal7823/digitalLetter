@@ -46,3 +46,5 @@ class CategoriesView(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     permission_classes = [AllowAny]  # Adjust permissions as needed
 
+
+#TODO SHOULD IMPLEMENT THE TEST TO ALL APPS
