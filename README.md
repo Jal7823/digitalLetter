@@ -60,16 +60,15 @@ Bienvenido a **DigitalLetter API** — un backend RESTful construido con Django 
 
 ## 🐳 Docker
 
-Se usa una imagen basada en `python:3.11-slim` con instalación de paquetes necesarios para compilar `mysqlclient`:
+Este proyecto puede ejecutarse dentro de contenedores Docker usando `Dockerfile` y `docker-compose.yml`.
 
-```dockerfile
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    default-libmysqlclient-dev \
-    python3-dev \
-    pkg-config \
-    && rm -rf /var/lib/apt/lists/*
+Para iniciar:
+> Asegúrate de tener Docker y Docker Compose instalados previamente.
+```bash
+docker-compose up --build
+
 ```
+
 
 Esto permite instalar correctamente las dependencias de requirements.txt que incluyen mysqlclient.
 
@@ -90,11 +89,15 @@ router.register(r'clients', RegisterClients, basename='clients')
 ```
 
 ## ⚙️ Configuración
-Usa .env para variables sensibles (no incluido en el repo).
 
-Base de datos SQLite por defecto, puedes cambiar a PostgreSQL o MySQL en core/settings.py.
+Usa `.env` para variables sensibles (no incluido en el repo).
 
-Configura almacenamiento para imágenes (MEDIA_ROOT y MEDIA_URL).
+La base de datos por defecto es **SQLite**, que no requiere configuración adicional.
+
+Si en el futuro quieres cambiar a PostgreSQL u otro motor, puedes modificar `DATABASES` en `core/settings.py`.
+
+Configura almacenamiento para imágenes (`MEDIA_ROOT` y `MEDIA_URL`).
+
 
 ## 💡 Buenas prácticas
 Usa serializers separados para lectura y escritura si necesitas formatos diferentes.
