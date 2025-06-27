@@ -72,11 +72,7 @@ docker-compose up --build
 
 Esto permite instalar correctamente las dependencias de requirements.txt que incluyen mysqlclient.
 
-## 🧪 Cómo ejecutar los tests
-Para correr los tests con pytest:
 
-```bash
-pytest
 ```
 ## 📂 Rutas principales (routers)
 Se definen usando DefaultRouter para cada app:
