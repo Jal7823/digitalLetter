@@ -1,8 +1,11 @@
 
 # 📄 DigitalLetter API
+
 Bienvenido a **DigitalLetter API** — un backend RESTful construido con Django y Django REST Framework para manejar categorías, productos (platos) y usuarios con roles diferenciados.
 
 [![codecov](https://codecov.io/gh/Jal7283/digitalLetter/branch/main/graph/badge.svg)](https://codecov.io/gh/Jal7283/digitalLetter)
+
+[![Build Status](https://github.com/Jal7283/digitalLetter/actions/workflows/ci.yml/badge.svg)](https://github.com/Jal7283/digitalLetter/actions)
 
 ---
 
@@ -31,33 +34,33 @@ Bienvenido a **DigitalLetter API** — un backend RESTful construido con Django 
 
 ## 🔍 Endpoints principales
 
-| Recurso    | URL base            | Métodos           | Descripción                         |
-|------------|---------------------|-------------------|-------------------------------------|
-| Categorías | `/api/categories/`  | GET, POST, PUT... | CRUD de categorías                  |
-| Platos     | `/api/products/`    | GET, POST, PUT... | CRUD de platos vinculados a categorías |
-| Empleados  | `/api/employe/`     | GET, POST, PATCH  | Gestión de usuarios con rol `employe` |
-| Clientes   | `/api/clients/`     | GET, POST, PATCH  | Gestión de usuarios con rol `client` |
-| Autenticación | `/api/token/`    | POST              | Login con JWT                       |
-| Usuario actual | `/api/me/`      | GET, PATCH        | Perfil del usuario autenticado      |
-| Cambio de contraseña | `/api/change-password/` | POST | Cambiar contraseña del usuario |
+| Recurso           | URL base                | Métodos         | Descripción                           |
+|-------------------|-------------------------|------------------|---------------------------------------|
+| Categorías        | `/api/categories/`      | GET, POST, PUT… | CRUD de categorías                    |
+| Platos            | `/api/products/`        | GET, POST, PUT… | CRUD de platos vinculados a categorías |
+| Empleados         | `/api/employe/`         | GET, POST, PATCH| Gestión de usuarios con rol `employe` |
+| Clientes          | `/api/clients/`         | GET, POST, PATCH| Gestión de usuarios con rol `client`  |
+| Autenticación     | `/api/token/`           | POST            | Login con JWT                         |
+| Usuario actual    | `/api/me/`              | GET, PATCH      | Perfil del usuario autenticado        |
+| Cambio contraseña | `/api/change-password/` | POST            | Cambiar contraseña del usuario        |
 
 ---
 
 ## 📑 Documentación
 
-Accede a la documentación automática de la API generada con **DRF Spectacular**:
+Generada automáticamente con **DRF Spectacular**:
 
-- Swagger UI: `http://localhost:8000/`  
-- Redoc: `http://localhost:8000/api/redoc/`  
-- Esquema OpenAPI (JSON): `http://localhost:8000/api/schema/`
+- Swagger UI: [`/`](http://localhost:8000/)  
+- Redoc: [`/api/redoc/`](http://localhost:8000/api/redoc/)  
+- Esquema OpenAPI (JSON): [`/api/schema/`](http://localhost:8000/api/schema/)
 
 ---
 
 ## 🔐 Autenticación y permisos
 
-- Autenticación JWT vía `/api/token/` (obtener token) y `/api/token/refresh/` (refrescar)
-- Permisos configurados según roles (`IsStaff`, `IsEmploye`, etc.)
-- Algunas rutas abiertas (`AllowAny`) durante desarrollo
+- JWT vía SimpleJWT (`/api/token/` y `/api/token/refresh/`)  
+- Permisos personalizados: `IsStaff`, `IsEmploye`, `IsBoss`, `IsStaffOrEmploye`  
+- Algunas rutas abiertas (`AllowAny`) en desarrollo
 
 ---
 
@@ -66,16 +69,16 @@ Accede a la documentación automática de la API generada con **DRF Spectacular*
 ### 🧑 Users
 
 - Hereda de `AbstractUser`  
-- Campos adicionales: `role`, `address`, `location`, `province`, `phone`, `image`  
+- Campos personalizados: `role`, `address`, `location`, `province`, `phone`, `image`  
 - Roles posibles: `client`, `employe`, `boos`  
-- Manejo seguro de contraseñas con `set_password`
+- Manejo seguro de contraseñas (`set_password`)  
 
 ### 🍽 Plates (Productos)
 
 - Campos: `name`, `description`, `price`, `stock`, `available`, `image`  
 - Relación ManyToMany con `Category`  
-- Serializadores separados para lectura (`ProductSerializerGet`) y escritura (`ProductSerializerPost`)  
-- Validación personalizada en `price`  
+- Serializadores separados: `ProductSerializerGet` (lectura) y `ProductSerializerPost` (escritura)  
+- Validación de `price` para evitar valores negativos
 
 ---
 
@@ -83,68 +86,77 @@ Accede a la documentación automática de la API generada con **DRF Spectacular*
 
 ### .env
 
-Usa un archivo `.env` (no incluido en el repo) con tus variables sensibles, como:
+Usa un archivo `.env` para variables sensibles. Ejemplo:
 
-> DJANGO_SECRET_KEY=your-secret-key
-> DJANGO_ENV=development
-> DEBUG=True
-
+```env
+DJANGO_SECRET_KEY=your-secret-key
+DJANGO_ENV=development
+DEBUG=True
+```
 
 Se carga automáticamente con `python-dotenv` desde `manage.py`.
 
 ### Base de datos
 
-Se usa SQLite por defecto. Puedes cambiar a PostgreSQL en `core/settings/production.py`.
+- Por defecto se usa **SQLite** (ideal para desarrollo).  
+- Puedes cambiar a PostgreSQL modificando `core/settings/production.py`.
 
 ---
 
 ## 🐳 Docker
 
-Este proyecto incluye soporte Docker listo para usar:
+Este proyecto está listo para ejecutarse con Docker:
 
 ```bash
 docker-compose up --build
 ```
-Asegúrate de tener .env y que los puertos/volúmenes estén bien configurados en tu docker-compose.yml.
 
-✅ ## Testing
-Usa pytest con pytest-django:
+Asegúrate de tener `.env` y que puertos/volúmenes estén bien configurados en `docker-compose.yml`.
 
-```bash 
+---
+
+## ✅ Testing
+
+Usa `pytest` y `pytest-django`:
+
+```bash
 pytest
 ```
-Usa pytest.mark.django_db para pruebas que accedan a la base de datos.
 
-Evita tests con imágenes si no son necesarios (multipart).
+- Usa `pytest.mark.django_db` para pruebas que usen la base de datos  
+- Las pruebas cubren categorías, platos, usuarios y permisos  
+- Evita pruebas con imágenes si no son necesarias
 
-La suite cubre: categorías, platos, usuarios y lógica de permisos.
+---
 
-## Enrutamiento principal
-Registrado con DefaultRouter para cada viewset. Ejemplo:
+## 🔀 Enrutamiento principal
 
-```
-python
+Registrado con `DefaultRouter` para cada viewset. Ejemplo:
 
+```python
 router.register(r'categories', CategoriesView, basename='categories')
 router.register(r'products', ProductsViewSetGet, basename='products')
 router.register(r'employe', RegisterEmploye, basename='employe')
 router.register(r'clients', RegisterClients, basename='clients')
 ```
-🧠 ## Buenas prácticas implementadas
-- Serializadores separados para lectura y escritura cuando el formato lo requiere
 
-- Validaciones personalizadas en los serializers
+---
 
-- Uso de viewsets.ModelViewSet + routers para mantener rutas limpias y RESTful
+## 🧠 Buenas prácticas aplicadas
 
-- Permisos personalizados por rol (IsStaffOrEmploye, etc.)
+- Separación de serializadores para lectura y escritura  
+- Validaciones personalizadas en `serializers.py`  
+- Viewsets + routers para mantener una API RESTful limpia  
+- Permisos granulares por rol  
+- Settings divididos por entorno (`DJANGO_ENV`)
 
-- División de settings por entorno usando DJANGO_ENV
+---
 
-📬 ## Contacto
-¿Quieres contribuir o tienes preguntas? ¡Contáctame!
+## 📬 Contacto
 
-Gracias por usar DigitalLetter API ✨
-✅ Estado del build en GitHub Actions
+¿Quieres contribuir o tienes preguntas?  
+**¡Escríbeme! Estaré encantado de ayudarte.**
 
-📊 Cobertura de pruebas (opcional, requiere configuración con codecov.io)
+---
+
+🎉 ¡Gracias por usar DigitalLetter API!
