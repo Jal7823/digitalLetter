@@ -1,6 +1,8 @@
-# 📄 DigitalLetter API
 
-Bienvenido a **DigitalLetter API** — un backend RESTful construido con Django y Django REST Framework para manejar categorías, productos (platos), y usuarios con roles diferenciados.
+# 📄 DigitalLetter API
+Bienvenido a **DigitalLetter API** — un backend RESTful construido con Django y Django REST Framework para manejar categorías, productos (platos) y usuarios con roles diferenciados.
+
+[![codecov](https://codecov.io/gh/<TU_USUARIO>/<TU_REPO>/branch/main/graph/badge.svg)](https://codecov.io/gh/<TU_USUARIO>/<TU_REPO>)
 
 ---
 
@@ -9,104 +11,140 @@ Bienvenido a **DigitalLetter API** — un backend RESTful construido con Django 
 - Python 3.11  
 - Django 5.2  
 - Django REST Framework  
-- Pytest para testing  
+- Simple JWT para autenticación  
 - DRF Spectacular para documentación OpenAPI/Swagger  
-- Base de datos SQLite (por defecto)  
+- Pytest para testing  
+- Docker & Docker Compose  
+- SQLite como base de datos por defecto  
 
 ---
 
 ## 📦 Estructura principal
 
-- **apps/categories/**: Gestión de categorías  
-- **apps/products/**: Gestión de platos y productos, con relación ManyToMany a categorías  
-- **apps/users/**: Gestión avanzada de usuarios con roles (`client`, `employe`, `boos`)  
-- **core/**: Configuración global del proyecto  
+- `apps/categories/`: Gestión de categorías  
+- `apps/products/`: Gestión de platos/productos, relacionados con categorías (ManyToMany)  
+- `apps/users/`: Gestión avanzada de usuarios con roles (`client`, `employe`, `boos`)  
+- `apps/company/`: Datos generales de la empresa  
+- `core/`: Configuración global del proyecto (`settings`, `urls`, `wsgi`)  
 
 ---
 
 ## 🔍 Endpoints principales
 
-| Recurso    | URL base          | Métodos          | Descripción                         |
-|------------|-------------------|------------------|-----------------------------------|
-| Categorías | `/api/categories/`| GET, POST, PUT...| CRUD de categorías                 |
-| Platos     | `/api/products/`  | GET, POST, PUT...| CRUD de platos con categorías     |
-| Empleados  | `/api/employe/`   | GET, POST, PATCH | Gestión usuarios con rol `employe`|
-| Clientes   | `/api/clients/`   | GET, POST, PATCH | Gestión usuarios con rol `client` |
+| Recurso    | URL base            | Métodos           | Descripción                         |
+|------------|---------------------|-------------------|-------------------------------------|
+| Categorías | `/api/categories/`  | GET, POST, PUT... | CRUD de categorías                  |
+| Platos     | `/api/products/`    | GET, POST, PUT... | CRUD de platos vinculados a categorías |
+| Empleados  | `/api/employe/`     | GET, POST, PATCH  | Gestión de usuarios con rol `employe` |
+| Clientes   | `/api/clients/`     | GET, POST, PATCH  | Gestión de usuarios con rol `client` |
+| Autenticación | `/api/token/`    | POST              | Login con JWT                       |
+| Usuario actual | `/api/me/`      | GET, PATCH        | Perfil del usuario autenticado      |
+| Cambio de contraseña | `/api/change-password/` | POST | Cambiar contraseña del usuario |
+
+---
+
+## 📑 Documentación
+
+Accede a la documentación automática de la API generada con **DRF Spectacular**:
+
+- Swagger UI: `http://localhost:8000/`  
+- Redoc: `http://localhost:8000/api/redoc/`  
+- Esquema OpenAPI (JSON): `http://localhost:8000/api/schema/`
 
 ---
 
 ## 🔐 Autenticación y permisos
 
-- Por ahora, los permisos están abiertos (`AllowAny`) para facilitar el desarrollo.  
-- En producción, se recomienda añadir autenticación y permisos para proteger los endpoints.  
+- Autenticación JWT vía `/api/token/` (obtener token) y `/api/token/refresh/` (refrescar)
+- Permisos configurados según roles (`IsStaff`, `IsEmploye`, etc.)
+- Algunas rutas abiertas (`AllowAny`) durante desarrollo
 
 ---
 
 ## 📋 Modelos destacados
 
-### Users
+### 🧑 Users
 
-- Hereda de `AbstractUser` con campos personalizados como `role`, `address`, `location`, `phone`.  
-- Roles: `client`, `employe`, `boos`.  
-- Manejo de contraseña seguro con `set_password`.  
+- Hereda de `AbstractUser`  
+- Campos adicionales: `role`, `address`, `location`, `province`, `phone`, `image`  
+- Roles posibles: `client`, `employe`, `boos`  
+- Manejo seguro de contraseñas con `set_password`
 
-### Plates (Productos)
+### 🍽 Plates (Productos)
 
-- Campos como `name`, `description`, `price`, `stock`, `available`.  
-- Relación ManyToMany con categorías.  
-- Serializadores separados para lectura (`ProductSerializerGet`) y escritura (`ProductSerializerPost`).  
+- Campos: `name`, `description`, `price`, `stock`, `available`, `image`  
+- Relación ManyToMany con `Category`  
+- Serializadores separados para lectura (`ProductSerializerGet`) y escritura (`ProductSerializerPost`)  
+- Validación personalizada en `price`  
+
+---
+
+## ⚙️ Configuración del entorno
+
+### .env
+
+Usa un archivo `.env` (no incluido en el repo) con tus variables sensibles, como:
+
+> DJANGO_SECRET_KEY=your-secret-key
+> DJANGO_ENV=development
+> DEBUG=True
+
+
+Se carga automáticamente con `python-dotenv` desde `manage.py`.
+
+### Base de datos
+
+Se usa SQLite por defecto. Puedes cambiar a PostgreSQL en `core/settings/production.py`.
 
 ---
 
 ## 🐳 Docker
 
-Este proyecto puede ejecutarse dentro de contenedores Docker usando `Dockerfile` y `docker-compose.yml`.
+Este proyecto incluye soporte Docker listo para usar:
 
-Para iniciar:
-> Asegúrate de tener Docker y Docker Compose instalados previamente.
 ```bash
 docker-compose up --build
+```
+Asegúrate de tener .env y que los puertos/volúmenes estén bien configurados en tu docker-compose.yml.
+
+✅ ## Testing
+Usa pytest con pytest-django:
+
+```bash 
+pytest
+```
+Usa pytest.mark.django_db para pruebas que accedan a la base de datos.
+
+Evita tests con imágenes si no son necesarios (multipart).
+
+La suite cubre: categorías, platos, usuarios y lógica de permisos.
+
+## Enrutamiento principal
+Registrado con DefaultRouter para cada viewset. Ejemplo:
 
 ```
-## 📂 Rutas principales (routers)
-Se definen usando DefaultRouter para cada app:
-```
-```python
+python
+
 router.register(r'categories', CategoriesView, basename='categories')
 router.register(r'products', ProductsViewSetGet, basename='products')
 router.register(r'employe', RegisterEmploye, basename='employe')
 router.register(r'clients', RegisterClients, basename='clients')
 ```
+🧠 ## Buenas prácticas implementadas
+- Serializadores separados para lectura y escritura cuando el formato lo requiere
 
-## ⚙️ Configuración
+- Validaciones personalizadas en los serializers
 
-Usa `.env` para variables sensibles (no incluido en el repo).
+- Uso de viewsets.ModelViewSet + routers para mantener rutas limpias y RESTful
 
-La base de datos por defecto es **SQLite**, que no requiere configuración adicional.
+- Permisos personalizados por rol (IsStaffOrEmploye, etc.)
 
-Si en el futuro quieres cambiar a PostgreSQL u otro motor, puedes modificar `DATABASES` en `core/settings.py`.
+- División de settings por entorno usando DJANGO_ENV
 
-Configura almacenamiento para imágenes (`MEDIA_ROOT` y `MEDIA_URL`).
-
-
-## 💡 Buenas prácticas
-Usa serializers separados para lectura y escritura si necesitas formatos diferentes.
-
-Valida datos en los serializers (por ejemplo, precio no negativo).
-
-Usa fixtures y pytest.mark.django_db para tests que interactúan con la base de datos.
-
-Mantén rutas RESTful con viewsets y routers para claridad y escalabilidad.
-
-## 📬 Contacto
-Si quieres contribuir o tienes dudas, ¡escríbeme!
+📬 ## Contacto
+¿Quieres contribuir o tienes preguntas? ¡Contáctame!
 
 Gracias por usar DigitalLetter API ✨
+✅ Estado del build en GitHub Actions
 
-
-
-
-
-
-
-
+📊 Cobertura de pruebas (opcional, requiere configuración con codecov.io)
