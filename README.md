@@ -2,7 +2,7 @@
 # 📄 DigitalLetter API
 Bienvenido a **DigitalLetter API** — un backend RESTful construido con Django y Django REST Framework para manejar categorías, productos (platos) y usuarios con roles diferenciados.
 
-[![codecov](https://codecov.io/gh/Jal7283/digitalLetter/branch/main/graph/badge.svg)](https://codecov.io/gh/<TU_USUARIO>/<TU_REPO>)
+[![codecov](https://codecov.io/gh/Jal7283/digitalLetter/branch/main/graph/badge.svg)](https://codecov.io/gh/Jal7283/digitalLetter)
 
 ---
 
