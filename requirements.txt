@@ -15,6 +15,7 @@ Pygments==2.19.2
 PyJWT==2.9.0
 pytest==8.4.1
 pytest-django==4.11.1
+python-dotenv==1.1.1
 PyYAML==6.0.2
 referencing==0.36.2
 rpds-py==0.25.1
