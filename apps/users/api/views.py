@@ -12,6 +12,7 @@ from apps.users.api.serializers import (
     SerializerClients,
     SerializerEmploye,
     UserListSerializer,
+    ChangePasswordSerializer
 )
 
 
