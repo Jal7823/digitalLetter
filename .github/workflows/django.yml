@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.11]  # Usas 3.11 según tu Dockerfile
+        python-version: [3.13]
 
     steps:
     - uses: actions/checkout@v4
@@ -25,3 +25,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+    
+    - name: Run tests with pytest
+      run: |
+        pytest --ds=core.settings
