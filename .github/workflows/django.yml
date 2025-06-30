@@ -27,6 +27,21 @@ jobs:
         pip install -r requirements.txt
         pip install coverage
 
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.13]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+
     - name: Run tests with coverage
       run: |
         coverage run -m pytest --ds=core.settings
@@ -35,10 +50,16 @@ jobs:
     - name: Show coverage file
       run: cat coverage.xml
 
+  upload-codecov:
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         files: coverage.xml
         fail_ci_if_error: true
-
