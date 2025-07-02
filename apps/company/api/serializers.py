@@ -1,7 +1,10 @@
 from rest_framework import serializers
 from apps.company.models import Company
+from parler_rest.serializers import TranslatableModelSerializer, TranslatedFieldsField
 
-class CompanySerializer(serializers.ModelSerializer):
+
+class CompanySerializer(TranslatableModelSerializer):
+    translations = TranslatedFieldsField(shared_model=Company)
     class Meta:
         model = Company
         fields = '__all__'

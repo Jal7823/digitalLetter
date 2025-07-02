@@ -33,12 +33,15 @@ INSTALLED_APPS = [
     'apps.users',
     'drf_spectacular',
     'rest_framework_simplejwt',
+    'parler',
+    'parler_rest',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -161,4 +164,22 @@ SPECTACULAR_SETTINGS = {
             'description': 'Usa este formato: Token <tu_token>',
         },
     },
+}
+
+
+LANGUAGE_CODE = 'es'          # idioma por defecto de tu proyecto
+LANGUAGES = (
+    ('es', 'Español'),
+    ('en', 'English'),
+)
+
+PARLER_LANGUAGES = {
+    None: (                # “site_id”: None == todos los sites
+        {'code': 'es'},
+        {'code': 'en'},
+    ),
+    'default': {
+        'fallbacks': ['es'],     # si falta una traducción → cae al español
+        'hide_untranslated': False,
+    }
 }

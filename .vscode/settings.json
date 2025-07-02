@@ -2,7 +2,8 @@
     "conventionalCommits.scopes": [
         "Tests",
         "Documentation",
-        "Docker"
+        "Docker",
+        "Traslate"
     ],
     "python.testing.pytestArgs": [
         "apps"
