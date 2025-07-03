@@ -1,73 +1,135 @@
-# tests/test_categories.py
-
 import pytest
 from rest_framework.test import APIClient
 from django.urls import reverse
 from apps.categories.models import Category
-from django.core.files.uploadedfile import SimpleUploadedFile
+
 
 @pytest.fixture
 def api_client():
     return APIClient()
 
-@pytest.fixture
-def category():
-    return Category.objects.create(
-        name="Test Category",
-        description="Test Description"
-    )
 
 @pytest.mark.django_db
-def test_list_categories(api_client, category):
+def test_create_category_with_translations(api_client):
     url = reverse('categories-list')
-    response = api_client.get(url)
-    assert response.status_code == 200
-    assert any(cat['id'] == category.id for cat in response.json())
-
-@pytest.mark.django_db
-def test_create_category(api_client):
-    url = reverse('categories-list')
-    image = SimpleUploadedFile("test.jpg", b"file_content", content_type="image/jpeg")
-    data = {
-        "name": "New Category",
-        "description": "New description",
+    payload = {
+        "translations": {
+            "es": {
+                "name": "pruebas",
+                "description": "esta es la descripcion"
+            },
+            "en": {
+                "name": "test",
+                "description": "this is a description"
+            }
+        },
+        "image": None
     }
-    response = api_client.post(url, data, format='multipart')
+    response = api_client.post(url, payload, format='json')
     assert response.status_code == 201
-    assert response.data['name'] == "New Category"
+    data = response.json()
+    assert 'translations' in data
+    assert 'es' in data['translations']
+    assert data['translations']['es']['name'] == "pruebas"
+    assert data['translations']['en']['name'] == "test"
+
 
 @pytest.mark.django_db
-def test_retrieve_category(api_client, category):
-    url = reverse('categories-detail', args=[category.id])
+def test_list_categories(api_client):
+    # Crear una categoría para listar
+    category = Category.objects.create()
+    category.set_current_language('es')
+    category.name = 'Prueba ES'
+    category.description = 'Descripción en español'
+    category.save()
+    category.set_current_language('en')
+    category.name = 'Test EN'
+    category.description = 'English description'
+    category.save()
+
+    url = reverse('categories-list')
     response = api_client.get(url)
     assert response.status_code == 200
-    assert response.data['id'] == category.id
-    assert response.data['name'] == category.name
+    data = response.json()
+    assert len(data) > 0
+    assert 'translations' in data[0]
+    assert 'es' in data[0]['translations']
+
 
 @pytest.mark.django_db
-def test_update_category(api_client, category):
-    url = reverse('categories-detail', args=[category.id])
-    data = {
-        "name": "Updated Category",
-        "description": "Updated Description"
-    }
-    response = api_client.put(url, data)
+def test_retrieve_category(api_client):
+    category = Category.objects.create()
+    category.set_current_language('es')
+    category.name = 'Prueba ES'
+    category.description = 'Descripción en español'
+    category.save()
+
+    url = reverse('categories-detail', args=[category.pk])
+    response = api_client.get(url)
     assert response.status_code == 200
-    assert response.data['name'] == "Updated Category"
+    data = response.json()
+    assert data['translations']['es']['name'] == 'Prueba ES'
+
 
 @pytest.mark.django_db
-def test_partial_update_category(api_client, category):
-    url = reverse('categories-detail', args=[category.id])
-    data = {
-        "description": "Partially Updated"
+def test_update_category(api_client):
+    category = Category.objects.create()
+    category.set_current_language('es')
+    category.name = 'Prueba ES'
+    category.description = 'Descripción en español'
+    category.save()
+
+    url = reverse('categories-detail', args=[category.pk])
+    payload = {
+        "translations": {
+            "es": {
+                "name": "pruebas editado",
+                "description": "descripcion editada"
+            },
+            "en": {
+                "name": "test edited",
+                "description": "edited description"
+            }
+        },
+        "image": None
     }
-    response = api_client.patch(url, data)
+    response = api_client.put(url, payload, format='json')
     assert response.status_code == 200
-    assert response.data['description'] == "Partially Updated"
+    data = response.json()
+    assert data['translations']['es']['name'] == "pruebas editado"
+
 
 @pytest.mark.django_db
-def test_delete_category(api_client, category):
-    url = reverse('categories-detail', args=[category.id])
+def test_partial_update_category(api_client):
+    category = Category.objects.create()
+    category.set_current_language('es')
+    category.name = 'Prueba ES'
+    category.description = 'Descripción en español'
+    category.save()
+
+    url = reverse('categories-detail', args=[category.pk])
+    payload = {
+        "translations": {
+            "es": {
+                "name": "prueba parcial"
+            }
+        }
+    }
+    response = api_client.patch(url, payload, format='json')
+    assert response.status_code == 200
+    data = response.json()
+    assert data['translations']['es']['name'] == "prueba parcial"
+
+
+@pytest.mark.django_db
+def test_delete_category(api_client):
+    category = Category.objects.create()
+    category.set_current_language('es')
+    category.name = 'Prueba ES'
+    category.description = 'Descripción en español'
+    category.save()
+
+    url = reverse('categories-detail', args=[category.pk])
     response = api_client.delete(url)
     assert response.status_code == 204
-    assert not Category.objects.filter(id=category.id).exists()
+    assert Category.objects.filter(pk=category.pk).count() == 0

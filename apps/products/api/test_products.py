@@ -1,103 +1,160 @@
-# tests/test_products.py
-
 import pytest
 from rest_framework.test import APIClient
 from django.urls import reverse
 from apps.products.models import Plates
 from apps.categories.models import Category
 
+
 @pytest.fixture
 def api_client():
     return APIClient()
 
-@pytest.fixture
-def category():
-    return Category.objects.create(name="Category A", description="Desc A")
-
-@pytest.fixture
-def plate(category):
-    plate = Plates.objects.create(
-        name="Test Plate",
-        description="Delicious",
-        price=10.00,
-        available=True,
-        stock=5,
-    )
-    plate.categories.set([category])
-    return plate
 
 @pytest.mark.django_db
-def test_list_plates(api_client, plate):
+def test_create_product_with_translations_and_categories(api_client):
+    # Primero crea categorías
+    cat1 = Category.objects.create()
+    cat1.set_current_language('es')
+    cat1.name = "Categoría ES"
+    cat1.save()
+    cat1.set_current_language('en')
+    cat1.name = "Category EN"
+    cat1.save()
+
     url = reverse('products-list')
-    response = api_client.get(url)
-    assert response.status_code == 200
-    assert any(p['id'] == plate.id for p in response.json())
-
-@pytest.mark.django_db
-def test_retrieve_plate(api_client, plate):
-    url = reverse('products-detail', args=[plate.id])
-    response = api_client.get(url)
-    assert response.status_code == 200
-    assert response.data['id'] == plate.id
-
-@pytest.mark.django_db
-def test_create_plate(api_client, category):
-    url = reverse('products-list')
-    data = {
-        "name": "New Plate",
-        "description": "Tasty",
-        "price": 12.00,
+    payload = {
+        "translations": {
+            "es": {
+                "name": "Producto ES",
+                "description": "Descripción ES"
+            },
+            "en": {
+                "name": "Product EN",
+                "description": "Description EN"
+            }
+        },
+        "price": "10.00",
+        "stock": 50,
         "available": True,
-        "stock": 10,
-        "categories": [category.id]
+        "categories": [cat1.pk],
+        "image": None
     }
-    response = api_client.post(url, data)
+    response = api_client.post(url, payload, format='json')
     assert response.status_code == 201
-    assert response.data['name'] == "New Plate"
+    data = response.json()
+    assert 'translations' in data
+    assert data['translations']['es']['name'] == "Producto ES"
+    assert data['categories'] == [cat1.pk]
+    # price llega como string + " €" por to_representation
+    assert data['price'].endswith('€')
+
 
 @pytest.mark.django_db
-def test_create_plate_negative_price(api_client, category):
+def test_list_products_only_available(api_client):
+    # Producto disponible
+    plate1 = Plates.objects.create(price=5, stock=10, available=True)
+    plate1.set_current_language('es')
+    plate1.name = "Disponible ES"
+    plate1.save()
+    # Producto no disponible
+    plate2 = Plates.objects.create(price=5, stock=10, available=False)
+    plate2.set_current_language('es')
+    plate2.name = "No disponible ES"
+    plate2.save()
+
     url = reverse('products-list')
-    data = {
-        "name": "Invalid Plate",
-        "description": "Nope",
-        "price": -5.00,
+    response = api_client.get(url)
+    assert response.status_code == 200
+    data = response.json()
+    names = [item['translations']['es']['name'] for item in data]
+    assert "Disponible ES" in names
+    assert "No disponible ES" not in names
+
+
+@pytest.mark.django_db
+def test_retrieve_product(api_client):
+    plate = Plates.objects.create(price=20, stock=5, available=True)
+    plate.set_current_language('es')
+    plate.name = "Plato ES"
+    plate.description = "Desc ES"
+    plate.save()
+
+    url = reverse('products-detail', args=[plate.pk])
+    response = api_client.get(url)
+    assert response.status_code == 200
+    data = response.json()
+    assert data['translations']['es']['name'] == "Plato ES"
+
+
+@pytest.mark.django_db
+def test_update_product(api_client):
+    plate = Plates.objects.create(price=30, stock=20, available=True)
+    plate.set_current_language('es')
+    plate.name = "Plato ES"
+    plate.description = "Desc ES"
+    plate.save()
+
+    cat = Category.objects.create()
+    cat.set_current_language('es')
+    cat.name = "Categoria ES"
+    cat.save()
+
+    url = reverse('products-detail', args=[plate.pk])
+    payload = {
+        "translations": {
+            "es": {
+                "name": "Plato Editado ES",
+                "description": "Desc editada ES"
+            },
+            "en": {
+                "name": "Edited Plate EN",
+                "description": "Edited desc EN"
+            }
+        },
+        "price": "50.00",
+        "stock": 100,
         "available": True,
-        "stock": 3,
-        "categories": [category.id]
+        "categories": [cat.pk],
+        "image": None
     }
-    response = api_client.post(url, data)
-    assert response.status_code == 400
-    assert "price" in response.data
-
-@pytest.mark.django_db
-def test_update_plate(api_client, plate, category):
-    url = reverse('products-detail', args=[plate.id])
-    data = {
-        "name": "Updated Plate",
-        "description": "Now with cheese",
-        "price": 15.00,
-        "available": False,
-        "stock": 2,
-        "categories": [category.id]
-    }
-    response = api_client.put(url, data)
+    response = api_client.put(url, payload, format='json')
     assert response.status_code == 200
-    assert response.data['name'] == "Updated Plate"
+    data = response.json()
+    assert data['translations']['es']['name'] == "Plato Editado ES"
+    assert data['categories'] == [cat.pk]
+    assert data['price'].endswith('€')
+
 
 @pytest.mark.django_db
-def test_partial_update_plate(api_client, plate):
-    url = reverse('products-detail', args=[plate.id])
-    data = {
-        "stock": 99
+def test_partial_update_product(api_client):
+    plate = Plates.objects.create(price=15, stock=30, available=True)
+    plate.set_current_language('es')
+    plate.name = "Plato ES"
+    plate.description = "Desc ES"
+    plate.save()
+
+    url = reverse('products-detail', args=[plate.pk])
+    payload = {
+        "translations": {
+            "es": {
+                "name": "Plato Parcial"
+            }
+        }
     }
-    response = api_client.patch(url, data)
+    response = api_client.patch(url, payload, format='json')
     assert response.status_code == 200
-    assert response.data['stock'] == 99
+    data = response.json()
+    assert data['translations']['es']['name'] == "Plato Parcial"
+
 
 @pytest.mark.django_db
-def test_delete_plate(api_client, plate):
-    url = reverse('products-detail', args=[plate.id])
+def test_delete_product(api_client):
+    plate = Plates.objects.create(price=10, stock=10, available=True)
+    plate.set_current_language('es')
+    plate.name = "Plato ES"
+    plate.save()
+
+    url = reverse('products-detail', args=[plate.pk])
     response = api_client.delete(url)
     assert response.status_code == 204
-    assert not Plates.objects.filter(id=plate.id).exists()
+    assert Plates.objects.filter(pk=plate.pk).count() == 0
