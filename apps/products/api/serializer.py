@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from parler_rest.serializers import TranslatableModelSerializer, TranslatedFieldsField
 from apps.products.models import Plates
 from apps.categories.api.serializers import CategorySerializer  
 from apps.categories.models import Category
@@ -8,7 +9,6 @@ class ProductSerializerPost(serializers.ModelSerializer):
     Serializer for creating and updating Product (Plate) instances.
     Includes validation and custom price formatting in the response.
     """
-
     categories = serializers.PrimaryKeyRelatedField(
         many=True, queryset=Category.objects.all()
     )
@@ -29,11 +29,12 @@ class ProductSerializerPost(serializers.ModelSerializer):
         data['price'] = data['price'] + ' €'
         return data
 
-class ProductSerializerGet(serializers.ModelSerializer):
+class ProductSerializerGet(TranslatableModelSerializer):
     """
     Serializer for reading Product (Plate) instances with related category info.
     Includes validation and custom price formatting in the response.
     """
+    translations = TranslatedFieldsField(shared_model=Plates)
     categories = CategorySerializer(many=True, read_only=True)
 
     class Meta:

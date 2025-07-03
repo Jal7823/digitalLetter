@@ -35,16 +35,9 @@ from rest_framework.response import Response
     ),
 )
 class CategoriesView(viewsets.ModelViewSet):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
-
-class CategoriesView(viewsets.ModelViewSet):
     """
     Viewset for managing categories.
     """
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = [AllowAny]  # Adjust permissions as needed
-
-
-#TODO SHOULD IMPLEMENT THE TEST TO ALL APPS
+    permission_classes = [AllowAny]  
