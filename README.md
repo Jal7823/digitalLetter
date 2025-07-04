@@ -7,10 +7,6 @@ Bienvenido a **DigitalLetter API** — un backend RESTful construido con Django 
 
 [![Build Status](https://img.shields.io/badge/estado-estable-brightgreen)](https://github.com/Jal7823/digitalLetter/actions)
 
-# 📄 DigitalLetter API
-
-Bienvenido a **DigitalLetter API** — un backend RESTful construido con Django y Django REST Framework para manejar categorías, productos (platos) y usuarios con roles diferenciados.
-
 ---
 
 ## 🚀 Tecnologías usadas
