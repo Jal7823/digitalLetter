@@ -63,5 +63,3 @@ digitalLetter/
 - Uso de permisos granulares basados en roles para controlar accesos.
 - Uso de pruebas automatizadas con `pytest` para asegurar calidad.
 - Implementación de soporte multilenguaje sólo en las apps que lo necesitan (`categories` y `products`).
-
----

@@ -108,7 +108,3 @@ Respuesta:
   "role": "client"
 }
 ```
-
----
-
-¿Quieres que te prepare ejemplos para endpoints específicos o explicar cómo probarlos con curl o Postman?
