@@ -1,6 +1,8 @@
 asgiref==3.8.1
 attrs==25.3.0
 Django==5.2.3
+django-parler==2.3
+django-parler-rest==2.2
 djangorestframework==3.16.0
 djangorestframework_simplejwt==5.5.0
 drf-spectacular==0.28.0
