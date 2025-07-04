@@ -7,6 +7,7 @@ Bienvenido a **DigitalLetter API** — un backend RESTful construido con Django 
 
 [![Build Status](https://github.com/Jal7823/digitalLetter/actions/workflows/ci.yml/badge.svg)](https://github.com/Jal7823/digitalLetter/actions)
 
+
 ---
 
 ## 🚀 Tecnologías usadas
