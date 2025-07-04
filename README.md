@@ -5,7 +5,7 @@ Bienvenido a **DigitalLetter API** — un backend RESTful construido con Django 
 
 [![codecov](https://codecov.io/gh/Jal7823/digitalLetter/branch/main/graph/badge.svg)](https://codecov.io/gh/Jal7823/digitalLetter)
 
-[![Build Status](https://github.com/Jal7823/digitalLetter/actions/workflows/ci.yml/badge.svg)](https://github.com/Jal7823/digitalLetter/actions)
+[![Build Status](https://img.shields.io/badge/estado-estable-brightgreen)](https://github.com/Jal7823/digitalLetter/actions)
 
 
 ---
