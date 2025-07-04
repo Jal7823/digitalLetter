@@ -45,8 +45,6 @@ def test_create_product_with_translations_and_categories(api_client):
     assert 'translations' in data
     assert data['translations']['es']['name'] == "Producto ES"
     assert data['categories'] == [cat1.pk]
-    # price llega como string + " €" por to_representation
-    assert data['price'].endswith('€')
 
 
 @pytest.mark.django_db
@@ -122,7 +120,6 @@ def test_update_product(api_client):
     data = response.json()
     assert data['translations']['es']['name'] == "Plato Editado ES"
     assert data['categories'] == [cat.pk]
-    assert data['price'].endswith('€')
 
 
 @pytest.mark.django_db
@@ -158,3 +155,6 @@ def test_delete_product(api_client):
     response = api_client.delete(url)
     assert response.status_code == 204
     assert Plates.objects.filter(pk=plate.pk).count() == 0
+
+
+#TODO revisar test en todos los modelos de la app

@@ -41,3 +41,5 @@ class ProductsViewSetGet(viewsets.ModelViewSet):
         if self.action in ['list', 'retrieve']:
             return ProductSerializerGet
         return ProductSerializerPost
+    
+    
