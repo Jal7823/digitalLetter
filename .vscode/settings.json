@@ -3,7 +3,8 @@
         "Tests",
         "Documentation",
         "Docker",
-        "Traslate"
+        "Traslate",
+        "Workflow"
     ],
     "python.testing.pytestArgs": [
         "apps"
