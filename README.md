@@ -26,7 +26,15 @@ Bienvenido a **DigitalLetter API** — un backend RESTful construido con Django 
 - **django-parler** para traducciones multilenguaje (solo en `categories` y `products`)
 
 ---
+## 📁 Documentación
 
+Puedes consultar la documentación extendida aquí:
+
+- [Arquitectura del proyecto](docs/architecture.md)  
+- [Rutas API detalladas](docs/api-routes.md)  
+- [Soporte de traducciones](docs/translations.md)  
+
+---
 ## 📦 Estructura principal
 
 - `apps/categories/`: Gestión de categorías (con soporte de traducciones)
