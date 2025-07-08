@@ -25,7 +25,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install coverage pytest pytest-django
+          pip install coverage pytest pytest-django allure-pytest
 
   test:
     needs: build
@@ -46,11 +46,11 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install coverage pytest pytest-django
+          pip install coverage pytest pytest-django allure-pytest
 
-      - name: Run tests with coverage
+      - name: Run tests with coverage and allure
         run: |
-          coverage run -m pytest --ds=core.settings
+          coverage run -m pytest --ds=core.settings --alluredir=allure-results
           coverage xml
 
       - name: Upload coverage artifact
@@ -58,6 +58,29 @@ jobs:
         with:
           name: coverage-report
           path: coverage.xml
+
+      - name: Upload Allure results
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: allure-results/
+
+      - name: Install Allure CLI
+        run: |
+          curl -o allure.tgz -L https://github.com/allure-framework/allure2/releases/latest/download/allure-2.34.1.tgz
+          tar -xzf allure.tgz
+          sudo mv allure-2.34.1 /opt/allure
+          sudo ln -s /opt/allure/bin/allure /usr/local/bin/allure
+
+      - name: Generate Allure report
+        run: |
+          allure generate allure-results -o allure-report --clean
+
+      - name: Upload Allure HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: allure-report/
 
   upload-codecov:
     needs: test
